@@ -1,5 +1,6 @@
 package com.example.board.controller;
 
+import com.example.board.dto.PostDto;
 import com.example.board.entity.Post;
 import com.example.board.entity.User;
 import com.example.board.service.PostService;
@@ -22,10 +23,10 @@ public class PostController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Post insertPost(Post post) throws Exception {
+    public Post insertPost(PostDto postDto) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return postService.insertPost(user, post);
+        return postService.insertPost(user, postDto);
     }
 
     @GetMapping
@@ -43,12 +44,12 @@ public class PostController {
     }
 
     @PutMapping(value = "{id}")
-    public Post updatePost(@PathVariable("id") Long post_id, Post post) throws Exception {
+    public Post updatePost(@PathVariable("id") Long post_id, PostDto postDto) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Post result = null;
         if (user.getUserId().equals(postService.getPostDetail(post_id).getUser().getUserId())) {
-            postService.updatePost(post_id, post);
+            postService.updatePost(post_id, postDto);
             result = postService.getPostDetail(post_id);
         } else {
             throw new Exception("Author Mismatch");

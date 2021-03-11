@@ -1,5 +1,6 @@
 package com.example.board.service;
 
+import com.example.board.dto.PostDto;
 import com.example.board.entity.Post;
 import com.example.board.entity.User;
 import com.example.board.repository.PostRepo;
@@ -18,10 +19,8 @@ public class PostService {
     PostRepo postRepo;
 
     @Transactional
-    public Post insertPost(User user, Post post) throws Exception{
-        post.setUser(user);
-        post.setCreatedAt(LocalDateTime.now());
-        post.setUpdatedAt(LocalDateTime.now());
+    public Post insertPost(User user, PostDto postDto) throws Exception{
+        Post post = new Post(postDto.getTitle(), postDto.getContent(), user, LocalDateTime.now(), LocalDateTime.now());
         return postRepo.save(post);
     }
 
@@ -33,22 +32,19 @@ public class PostService {
         return postRepo.findById(id).orElseGet(() -> null);
     }
 
-    public void updatePost(Long id, Post param) throws Exception {
-        Optional<Post> post = postRepo.findById(id);
-        post.ifPresent(entity -> {
-            entity.setTitle(param.getTitle());
-            entity.setContent(param.getContent());
-            entity.setUser(post.get().getUser());
-            entity.setCreatedAt(post.get().getCreatedAt());
-            entity.setUpdatedAt(LocalDateTime.now());
-            postRepo.save(entity);
-        });
+    public void updatePost(Long id, PostDto postDto) throws Exception {
+        Post post = postRepo.findById(id).orElseGet(() -> null);
+        if(post == null) {
+            throw new Exception("No Post");
+        } else {
+            post.setUpdate(postDto.getTitle(), postDto.getContent());
+        }
     }
 
     public void deletePost(Long id) throws Exception {
-        Object post = postRepo.findById(id).orElse(null);
+        Post post = postRepo.findById(id).orElse(null);
         if (post != null)
-            postRepo.delete((Post) post);
+            postRepo.delete(post);
         else
             throw new Exception("No Post");
     }

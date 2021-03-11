@@ -3,7 +3,7 @@ package com.example.board.controller;
 import com.example.board.config.security.JwtTokenProvider;
 import com.example.board.entity.UserToken;
 import com.example.board.entity.User;
-import com.example.board.params.UserParam;
+import com.example.board.dto.UserDto;
 import com.example.board.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +26,11 @@ public class UserController {
 
     @RequestMapping(value = "/registration", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseStatus(value = HttpStatus.CREATED)
-    public User registration(UserParam userParam) {
+    public User registration(UserDto userDto) {
         return userRepo.save(User.builder()
-                .userId(userParam.getUserId())
-                .username(userParam.getUsername())
-                .password(passwordEncoder.encode(userParam.getPassword()))
+                .userId(userDto.getUserId())
+                .username(userDto.getUsername())
+                .password(passwordEncoder.encode(userDto.getPassword()))
                 .roles(Collections.singletonList("ROLE_USER"))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -38,11 +38,11 @@ public class UserController {
     }
 
     @RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
-    public UserToken login(UserParam userParam) throws Exception {
+    public UserToken login(UserDto userDto) throws Exception {
         UserToken userToken = new UserToken();
 
-        User user = userRepo.findByUserId(userParam.getUserId()).orElseThrow(() -> new Exception("가입되지 않은 아이디 입니다."));
-        if (!passwordEncoder.matches(userParam.getPassword(), user.getPassword())) {
+        User user = userRepo.findByUserId(userDto.getUserId()).orElseThrow(() -> new Exception("가입되지 않은 아이디 입니다."));
+        if (!passwordEncoder.matches(userDto.getPassword(), user.getPassword())) {
             throw new Exception("잘못된 비밀번호입니다.");
         }
 

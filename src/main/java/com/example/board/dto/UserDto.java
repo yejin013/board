@@ -1,11 +1,11 @@
-package com.example.board.params;
+package com.example.board.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UserParam {
+public class UserDto {
     private String userId;
     private String username;
     private String password;
