@@ -67,4 +67,6 @@
 
 개발툴 : Intellij
 
+데이터베이스 : MySQL
+
 테스트툴 : Postman
